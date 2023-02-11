@@ -52,7 +52,7 @@ def main():
 
     # Load the map and close the file
     pose_data_yaml_file = open(args.pose_yaml_path, 'r')
-    pose_data_yaml = yaml.load(pose_data_yaml_file)
+    pose_data_yaml = yaml.load(pose_data_yaml_file, yaml.CLoader)
     pose_data_yaml_file.close()
 
     # Process it

@@ -22,11 +22,11 @@ def construct_dataset(is_train: bool) -> (SupervisedKeypointDataset, SupervisedK
     # Construct the db info
     db_config = SpartanSupvervisedKeypointDBConfig()
     db_config.keypoint_yaml_name = 'mug_3_keypoint_image.yaml'
-    db_config.pdc_data_root = '/home/wei/data/pdc'
+    db_config.pdc_data_root = '/home/rpm/Lab/cap_bottle/kpam/src/manip_dataset/pdc'
     if is_train:
-        db_config.config_file_path = '/home/wei/Coding/mankey/config/mugs_up_with_flat_logs.txt'
+        db_config.config_file_path = '/home/rpm/Lab/cap_bottle/kpam/src/mankey_ros/mankey/config/mugs_up_with_flat_logs.txt'
     else:
-        db_config.config_file_path = '/home/wei/Coding/mankey/config/mugs_up_with_flat_test_logs.txt'
+        db_config.config_file_path = '/home/rpm/Lab/cap_bottle/kpam/src/mankey_ros/mankey/config/mugs_up_with_flat_test_logs.txt'
 
     # Construct the database
     database = SpartanSupervisedKeypointDatabase(db_config)
@@ -63,7 +63,7 @@ def visualize_entry(
     processed_entry = dataset.get_processed_entry(dataset.entry_list[entry_idx])
 
     # The processed input
-    stacked_rgbd, normalized_xy_depth, _, _ = dataset[entry_idx]
+    stacked_rgbd = dataset[entry_idx]['rgbd_image']
     stacked_rgbd = torch.from_numpy(stacked_rgbd)
     stacked_rgbd = torch.unsqueeze(stacked_rgbd, dim=0)
     stacked_rgbd = stacked_rgbd.cuda()
@@ -252,7 +252,10 @@ def train(checkpoint_dir: str, start_from_ckpnt: str = '', save_epoch_offset: in
 
 def main():
     checkpoint_dir = os.path.join(os.path.dirname(__file__), 'ckpnt')
-    train(checkpoint_dir)
+    # train(checkpoint_dir)
+    os.makedirs('viz-mug', exist_ok=True)
+    visualize(os.path.join(checkpoint_dir, 'checkpoint-116.pth'), 'viz-mug')
+
 
 
 if __name__ == '__main__':

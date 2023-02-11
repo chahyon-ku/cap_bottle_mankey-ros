@@ -41,7 +41,7 @@ def main(visualize):
     request.depth_image = bridge.cv2_to_imgmsg(cv_depth)
     request.bounding_box = roi
     response = detect_keypoint(request)
-    print response
+    print(response)
 
     if visualize:
         import open3d as o3d
@@ -69,7 +69,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
         '--visualize', '-v', type=int,
-        default=0)
+        default=1)
     args = parser.parse_args()
     visualize = args.visualize
     main(visualize)

@@ -32,7 +32,7 @@ raw_image_root = os.path.join(scene_processed_root, 'images')
 # The path for camera config
 camera_config_path = os.path.join(raw_image_root, 'camera_info.yaml')
 assert os.path.exists(camera_config_path)
-camera_config_map = yaml.load(open(camera_config_path, 'r'))
+camera_config_map = yaml.load(open(camera_config_path, 'r'), yaml.CLoader)
 focal_x: float = camera_config_map['camera_matrix']['data'][0]
 focal_y: float = camera_config_map['camera_matrix']['data'][4]
 principal_x: float = camera_config_map['camera_matrix']['data'][2]
@@ -48,10 +48,10 @@ def point2pixel(keypoint_in_camera: np.ndarray) -> np.ndarray:
     """
     assert len(keypoint_in_camera.shape) is 2
     n_keypoint: int = keypoint_in_camera.shape[1]
-    xy_depth = np.zeros((3, n_keypoint), dtype=np.int)
-    xy_depth[0, :] = (np.divide(keypoint_in_camera[0, :], keypoint_in_camera[2, :]) * focal_x + principal_x).astype(np.int)
-    xy_depth[1, :] = (np.divide(keypoint_in_camera[1, :], keypoint_in_camera[2, :]) * focal_y + principal_y).astype(np.int)
-    xy_depth[2, :] = (1000.0 * keypoint_in_camera[2, :]).astype(np.int)
+    xy_depth = np.zeros((3, n_keypoint), dtype=int)
+    xy_depth[0, :] = (np.divide(keypoint_in_camera[0, :], keypoint_in_camera[2, :]) * focal_x + principal_x).astype(int)
+    xy_depth[1, :] = (np.divide(keypoint_in_camera[1, :], keypoint_in_camera[2, :]) * focal_y + principal_y).astype(int)
+    xy_depth[2, :] = (1000.0 * keypoint_in_camera[2, :]).astype(int)
     return xy_depth
 
 
@@ -160,13 +160,13 @@ def main():
     pose_data_path: str = os.path.join(raw_image_root, 'pose_data.yaml')
     assert os.path.exists(pose_data_path)
     in_pose_file = open(pose_data_path, 'r')
-    pose_data_map = yaml.load(in_pose_file)
+    pose_data_map = yaml.load(in_pose_file, yaml.CLoader)
 
     # Load the keypoint data
     keypoint_data_path = args.keypoint_yaml_path
     assert os.path.exists(keypoint_data_path)
     in_keypoint_file = open(keypoint_data_path, 'r')
-    keypoint_data_map = yaml.load(in_keypoint_file)
+    keypoint_data_map = yaml.load(in_keypoint_file, yaml.CLoader)
     keypoint_in_world = get_keypoint_in_world(keypoint_data_map)
 
     # Do it

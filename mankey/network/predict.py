@@ -23,9 +23,9 @@ def get_integral_preds_3d_gpu(
     accu_z = accu_z.sum(dim=3)
 
     # The pointwise product
-    accu_x = accu_x * torch.cuda.comm.broadcast(torch.arange(x_dim), devices=[accu_x.device.index])[0].type(torch.cuda.FloatTensor)
-    accu_y = accu_y * torch.cuda.comm.broadcast(torch.arange(y_dim), devices=[accu_y.device.index])[0].type(torch.cuda.FloatTensor)
-    accu_z = accu_z * torch.cuda.comm.broadcast(torch.arange(z_dim), devices=[accu_z.device.index])[0].type(torch.cuda.FloatTensor)
+    accu_x = accu_x * torch.arange(x_dim).type(torch.cuda.FloatTensor)
+    accu_y = accu_y * torch.arange(y_dim).type(torch.cuda.FloatTensor)
+    accu_z = accu_z * torch.arange(z_dim).type(torch.cuda.FloatTensor)
 
     # Further reduce to three (batch_size, num_keypoints) tensor
     accu_x = accu_x.sum(dim=2, keepdim=True)
@@ -129,10 +129,8 @@ def heatmap2d_to_imgcoord_gpu(
     accu_y = heatmap.sum(dim=3)
 
     # The pointwise product
-    accu_x = accu_x * torch.cuda.comm.broadcast(torch.arange(x_dim), devices=[accu_x.device.index])[0].type(
-        torch.cuda.FloatTensor)
-    accu_y = accu_y * torch.cuda.comm.broadcast(torch.arange(y_dim), devices=[accu_y.device.index])[0].type(
-        torch.cuda.FloatTensor)
+    accu_x = accu_x * torch.arange(x_dim).type(torch.cuda.FloatTensor)
+    accu_y = accu_y * torch.arange(y_dim).type(torch.cuda.FloatTensor)
 
     # Further reduce to three (batch_size, num_keypoints) tensor
     accu_x = accu_x.sum(dim=2, keepdim=True)

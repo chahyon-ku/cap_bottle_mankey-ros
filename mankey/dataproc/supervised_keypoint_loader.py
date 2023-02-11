@@ -6,6 +6,7 @@ import mankey.config.parameter as parameter
 from mankey.utils.imgproc import PixelCoord, get_guassian_heatmap, get_bbox_cropped_image_path
 from mankey.dataproc.supervised_keypoint_db import SupervisedKeypointDBEntry, SupervisedImageKeypointDatabase
 import attr
+import matplotlib.pyplot as plt
 
 
 @attr.s

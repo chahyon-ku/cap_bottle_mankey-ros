@@ -1,7 +1,8 @@
 import torch
 import torch.nn as nn
 from torchvision.models.resnet import BasicBlock, Bottleneck
-from torchvision.models.resnet import model_zoo, model_urls
+# from torchvision.models.resnet import model_zoo, model_urls
+from torchvision.models.resnet import model_urls, load_state_dict_from_url
 import attr
 
 
@@ -180,7 +181,7 @@ def initialize_backbone_from_modelzoo(
     ):
     assert image_channels == 3 or image_channels == 4
     _, _, _, name = resnet_spec[resnet_num_layers]
-    org_resnet = model_zoo.load_url(model_urls[name])
+    org_resnet = load_state_dict_from_url(model_urls[name])
     # Drop orginal resnet fc layer, add 'None' in case of no fc layer, that will raise error
     org_resnet.pop('fc.weight', None)
     org_resnet.pop('fc.bias', None)

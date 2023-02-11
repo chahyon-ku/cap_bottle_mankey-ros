@@ -15,7 +15,7 @@ from cv_bridge import CvBridge, CvBridgeError
 # The argument is only the network path
 parser = argparse.ArgumentParser()
 parser.add_argument('--net_path', type=str,
-                    default='/home/wei/data/trained_model/keypoint/mug/checkpoint-135.pth',
+                    default='/home/rpm/Lab/kpam/src/mankey_ros/models/checkpoint-135.pth',
                     help='The absolute path to network checkpoint')
 
 

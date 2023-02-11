@@ -11,14 +11,14 @@ the processed/ subdirectory for each scene.
 """
 parser = argparse.ArgumentParser()
 parser.add_argument('--annotation_dir', type=str,
-                    default='/home/wei/data/pdc/annotations/keypoints/heels',
+                    default='/home/rpm/Lab/cap_bottle/kpam/src/manip_dataset/annotations/keypoints/mug_3_keypoint',
                     help='The directory that contains all the annotation files')
-parser.add_argument('--annotation_type', type=str, default='shoe_standard',
+parser.add_argument('--annotation_type', type=str, default='mug_3_keypoint',
                     help='Which type of annotation need to be processed')
-parser.add_argument('--save_relative_path', type=str, default='shoe_6_keypoint_image.yaml',
+parser.add_argument('--save_relative_path', type=str, default='mug_3_keypoint_image.yaml',
                     help='The path to save the image keypoint yaml file. '
                          'Relative to the log_root/2018-11-23-../processed')
-parser.add_argument('--log_root_path', type=str, default='/home/wei/data/pdc/logs_proto',
+parser.add_argument('--log_root_path', type=str, default='/home/rpm/Lab/cap_bottle/kpam/src/manip_dataset/mug',
                     help='Full path/to/logs_proto')
 args = parser.parse_args()
 
@@ -122,7 +122,7 @@ def main():
 
         # Open the yaml file and get the map
         annotation_yaml_file = open(annotation_yaml_path, 'r')
-        annotation_yaml_list = yaml.load(annotation_yaml_file)
+        annotation_yaml_list = yaml.load(annotation_yaml_file, yaml.CLoader)
         annotation_yaml_file.close()
 
         # Iterate over the list

@@ -19,7 +19,7 @@ n_epoch = 120
 def construct_dataset(is_train: bool) -> (torch.utils.data.Dataset, SupervisedKeypointDatasetConfig):
     # Construct the db
     db_config = SpartanSupvervisedKeypointDBConfig()
-    db_config.keypoint_yaml_name = 'shoe_6_keypoint_image.yaml'
+    db_config.keypoint_yaml_name = 'mug_3_keypoint_image.yaml'
     db_config.pdc_data_root = '/home/wei/data/pdc'
     if is_train:
         db_config.config_file_path = '/home/wei/Coding/mankey/config/boot_logs.txt'

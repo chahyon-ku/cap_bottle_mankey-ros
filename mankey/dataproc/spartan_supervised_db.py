@@ -132,7 +132,7 @@ class SpartanSupervisedKeypointDatabase(SupervisedImageKeypointDatabase):
 
         # Read the yaml map
         keypoint_yaml_file = open(keypoint_yaml_path, 'r')
-        keypoint_yaml_map = yaml.load(keypoint_yaml_file)
+        keypoint_yaml_map = yaml.load(keypoint_yaml_file, yaml.CLoader)
         keypoint_yaml_file.close()
 
         # Iterate over image

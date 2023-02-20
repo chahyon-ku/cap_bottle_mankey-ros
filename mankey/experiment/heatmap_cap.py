@@ -87,19 +87,29 @@ def visualize_entry(
     depth_pred = (depth_pred * config.depth_image_scale) + config.depth_image_mean
 
     # Combine them
-    keypointxy_depth_pred = np.zeros((3, dataset.num_keypoints), dtype=np.int)
-    keypointxy_depth_pred[0, :] = coord_x[0, :, 0].astype(np.int)
-    keypointxy_depth_pred[1, :] = coord_y[0, :, 0].astype(np.int)
-    keypointxy_depth_pred[2, :] = depth_pred[0, :, 0].astype(np.int)
+    keypointxy_depth_pred = np.zeros((3, dataset.num_keypoints), dtype=int)
+    keypointxy_depth_pred[0, :] = coord_x[0, :, 0].astype(int)
+    keypointxy_depth_pred[1, :] = coord_y[0, :, 0].astype(int)
+    keypointxy_depth_pred[2, :] = depth_pred[0, :, 0].astype(int)
 
     # Get the image
     from mankey.utils.imgproc import draw_image_keypoint, draw_visible_heatmap
     # keypoint_rgb_cv = draw_image_keypoint(processed_entry.cropped_rgb, keypointxy_depth_pred, processed_entry.keypoint_validity)
-    keypoint_rgb_cv = cv2.circle(processed_entry.cropped_rgb, (keypointxy_depth_pred[0, 0], keypointxy_depth_pred[1, 0]), 5, (0, 0, 255), -1)
-    keypoint_rgb_cv = cv2.circle(keypoint_rgb_cv, (keypointxy_depth_pred[0, 1], keypointxy_depth_pred[1, 1]), 5, (0, 255, 0), -1)
-    keypoint_rgb_cv = cv2.circle(keypoint_rgb_cv, (keypointxy_depth_pred[0, 2], keypointxy_depth_pred[1, 2]), 5, (255, 0, 0), -1)
-    keypoint_rgb_cv = cv2.circle(keypoint_rgb_cv, (keypointxy_depth_pred[0, 3], keypointxy_depth_pred[1, 3]), 5, (0, 0, 0), -1)
+    print(processed_entry.keypoint_xy_depth[0, 0], processed_entry.keypoint_xy_depth[0, 1])
+    gt_keypoint_xy = processed_entry.keypoint_xy_depth[0:2, :].astype(int)
+    print(gt_keypoint_xy.shape)
+    keypoint_rgb_cv = cv2.circle(processed_entry.cropped_rgb, (gt_keypoint_xy[0, 0], gt_keypoint_xy[1, 0]), 1, (0, 0, 255), -1)
+    keypoint_rgb_cv = cv2.circle(keypoint_rgb_cv, (gt_keypoint_xy[0, 1], gt_keypoint_xy[1, 1]), 1, (0, 255, 0), -1)
+    keypoint_rgb_cv = cv2.circle(keypoint_rgb_cv, (gt_keypoint_xy[0, 2], gt_keypoint_xy[1, 2]), 1, (0, 0, 0), -1)
+    keypoint_rgb_cv = cv2.circle(keypoint_rgb_cv, (gt_keypoint_xy[0, 3], gt_keypoint_xy[1, 3]), 1, (255, 0, 0), -1)
+
+    keypoint_rgb_cv = cv2.circle(keypoint_rgb_cv, (keypointxy_depth_pred[0, 0], keypointxy_depth_pred[1, 0]), 1, (255, 0, 255), -1)
+    keypoint_rgb_cv = cv2.circle(keypoint_rgb_cv, (keypointxy_depth_pred[0, 1], keypointxy_depth_pred[1, 1]), 1, (0, 255, 255), -1)
+    keypoint_rgb_cv = cv2.circle(keypoint_rgb_cv, (keypointxy_depth_pred[0, 2], keypointxy_depth_pred[1, 2]), 1, (128, 128, 128), -1)
+    keypoint_rgb_cv = cv2.circle(keypoint_rgb_cv, (keypointxy_depth_pred[0, 3], keypointxy_depth_pred[1, 3]), 1, (255, 255, 0), -1)
     rgb_save_path = os.path.join(save_dir, 'image_%d_rgb.png' % entry_idx)
+    if os.path.exists(rgb_save_path):
+        os.remove(rgb_save_path)
     cv2.imwrite(rgb_save_path, keypoint_rgb_cv)
 
     # The depth error
@@ -118,6 +128,8 @@ def visualize_entry(
     raw_heatmap_np = regress_heatmap.cpu().detach().numpy()[0, max_error_keypoint, :, :]
     heatmap_vis = draw_visible_heatmap(raw_heatmap_np)
     heatmap_save_path = os.path.join(save_dir, 'image_%d_heatmap.png' % entry_idx)
+    if os.path.exists(heatmap_save_path):
+        os.remove(heatmap_save_path)
     cv2.imwrite(heatmap_save_path, heatmap_vis)
 
 

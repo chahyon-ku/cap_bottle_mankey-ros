@@ -23,9 +23,9 @@ def get_integral_preds_3d_gpu(
     accu_z = accu_z.sum(dim=3)
 
     # The pointwise product
-    accu_x = accu_x * torch.arange(x_dim).type(torch.cuda.FloatTensor)
-    accu_y = accu_y * torch.arange(y_dim).type(torch.cuda.FloatTensor)
-    accu_z = accu_z * torch.arange(z_dim).type(torch.cuda.FloatTensor)
+    accu_x = accu_x * torch.arange(x_dim).to(heatmaps)
+    accu_y = accu_y * torch.arange(y_dim).to(heatmaps)
+    accu_z = accu_z * torch.arange(z_dim).to(heatmaps)
 
     # Further reduce to three (batch_size, num_keypoints) tensor
     accu_x = accu_x.sum(dim=2, keepdim=True)
@@ -129,8 +129,8 @@ def heatmap2d_to_imgcoord_gpu(
     accu_y = heatmap.sum(dim=3)
 
     # The pointwise product
-    accu_x = accu_x * torch.arange(x_dim).type(torch.cuda.FloatTensor)
-    accu_y = accu_y * torch.arange(y_dim).type(torch.cuda.FloatTensor)
+    accu_x = accu_x * torch.arange(x_dim).to(heatmap)
+    accu_y = accu_y * torch.arange(y_dim).to(heatmap)
 
     # Further reduce to three (batch_size, num_keypoints) tensor
     accu_x = accu_x.sum(dim=2, keepdim=True)

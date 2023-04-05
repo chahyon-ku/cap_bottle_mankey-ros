@@ -47,6 +47,8 @@ class SupervisedKeypointDBEntry:
     # Homogeneous transformation matrix
     camera_in_world = np.ndarray(shape=[4, 4])
 
+    cam_K = None
+
 
 def sanity_check_spartan(entry: SupervisedKeypointDBEntry) -> bool:
     if len(entry.rgb_image_path) < 1 or (not os.path.exists(entry.rgb_image_path)):

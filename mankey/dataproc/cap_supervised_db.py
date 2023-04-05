@@ -17,6 +17,7 @@ class CapSupvervisedKeypointDBConfig:
     # ${pdc_data_root}/logs_proto/2018-10....
     data_dir = ''
     model_dir = ''
+    model_size = 80
     
     # Output the loading process
     verbose = True
@@ -34,6 +35,7 @@ class CapSupervisedKeypointDatabase(SupervisedImageKeypointDatabase):
         self._config = config  # Not actually use it, but might be useful
         self._keypoint_entry_list: List[SupervisedKeypointDBEntry] = []
         self._num_keypoint = 4
+        self.model_size = config.model_size
 
         # For each scene
         scene_list = sorted(os.listdir(config.data_dir))
@@ -68,15 +70,23 @@ class CapSupervisedKeypointDatabase(SupervisedImageKeypointDatabase):
                     entry.bbox_bottom_right.y = scene_gt_info[str(image_id)][obj_id]['bbox_obj'][1] + scene_gt_info[str(image_id)][obj_id]['bbox_obj'][3]
                     cam_R_m2c = np.array(scene_gt[str(image_id)][obj_id]['cam_R_m2c']).reshape(3, 3)
                     cam_t_m2c = np.array(scene_gt[str(image_id)][obj_id]['cam_t_m2c']).reshape(3, 1)
-                    keypoint_obj = np.array([[25, 25, 25], [25, 25, -25], [-25, 25, 25], [-25, 25, -25],]).T # mm
+                    keypoint_obj =  30 * np.array([[1, 1, 1], [1, 1, -1], [-1, 1, 1], [-1, 1, -1],]).T # mm
+                    keypoint_obj[1, :] += 10
                     entry.keypoint_camera = (cam_R_m2c @ keypoint_obj + cam_t_m2c) / 1000 # mm -> m
                     entry.camera_in_world = np.eye(4)
                     cam_K = np.array(scene_camera[str(image_id)]['cam_K']).reshape(3, 3)
+                    entry.cam_K = cam_K
                     keypoint_img = cam_K @ entry.keypoint_camera
                     keypoint_img = keypoint_img[:2, :] / keypoint_img[2, :]
                     keypoint_img = keypoint_img.T.astype(np.int32)
+                    # plt.imshow(cv2.imread(entry.rgb_image_path))
+                    # plt.scatter(keypoint_img[:, 0], keypoint_img[:, 1])
+                    # plt.show()
                     depth = cv2.imread(entry.depth_image_path, cv2.IMREAD_UNCHANGED)
                     depth = depth.astype(np.float32) * 0.1
+                    if np.any(keypoint_img[:, 1] >= depth.shape[0]) or np.any(keypoint_img[:, 0] >= depth.shape[1]):
+                        print(f'Warning: {entry.depth_image_path} has invalid keypoint')
+                        continue
                     keypoint_depth = depth[keypoint_img[:, 1], keypoint_img[:, 0]]
                     entry.keypoint_pixelxy_depth = np.concatenate([keypoint_img, keypoint_depth[:, np.newaxis]], axis=1).T.astype(int)
                     entry.keypoint_validity_weight = np.repeat((keypoint_img[:, 0] >= entry.bbox_top_left.x).astype(int) &
